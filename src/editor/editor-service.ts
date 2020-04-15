@@ -1,10 +1,9 @@
 import {Observable, of} from "rxjs";
 import {delay} from "rxjs/operators";
 
-class Service {
+export class Service {
     public updateEditorState(): Observable<boolean> {
         const updated: boolean = !!Math.round(Math.random());
-        console.log(updated);
         return of(updated).pipe(delay(2000));
     }
 }

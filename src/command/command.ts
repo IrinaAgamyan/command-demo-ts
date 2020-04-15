@@ -1,17 +1,15 @@
 abstract class Command {
-    protected receiver: any;
     protected editor: any;
+    public name: string = '';
+    public info?: CommandInfo;
 
-    constructor(editor: any, receiver?: any) {
+    constructor(editor: any) {
         this.editor = editor;
-        this.receiver = receiver;
     }
-
-    public abstract saveBackup(): void;
 
     public abstract undo(): void;
 
-    public abstract execute(): boolean;
+    public abstract do(): boolean;
 }
 
 export default Command;

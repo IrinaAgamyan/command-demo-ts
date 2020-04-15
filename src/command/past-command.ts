@@ -1,23 +1,26 @@
 import Command from "./command";
 
 class PastCommand extends Command {
-    private backup: string = '';
 
-    saveBackup(): void {
-        this.backup = this.editor.data$.value;
+    constructor(editor: any) {
+        super(editor);
+        this.name = 'PastCommand';
+        const newData = this.editor.clipboard ? `${this.editor.data$.value}${this.editor.clipboard}` : this.editor.data$.value;
+        this.info = {
+            selection: '',
+            newState: newData,
+            initialState: this.editor.data$.value,
+            timestamp: (new Date()).toDateString(),
+        }
     }
 
-    execute(): boolean {
-        this.saveBackup();
-        if (this.editor.clipboard) {
-            this.editor.data$.next(`${this.editor.data$.value}${this.editor.clipboard}`);
-        }
-
+    do(): boolean {
+        this.editor.data$.next(this.info?.newState);
         return true;
     }
 
     undo(): void {
-        this.editor.data$.next(this.backup);
+        this.editor.data$.next(this.info?.initialState);
     }
 }
 

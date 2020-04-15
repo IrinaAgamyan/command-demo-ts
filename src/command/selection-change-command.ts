@@ -1,19 +1,18 @@
 import Command from "./command";
 
 class SelectionChangeCommand extends Command {
-    saveBackup(): void {
-        return;
+    constructor(editor: any) {
+        super(editor);
+        this.name = 'SelectionChangeCommand';
     }
 
-    execute(): boolean {
+    do(): boolean {
         const selection = window.getSelection();
         this.editor.selection = selection && selection.toString();
         return false;
     }
 
-    undo(): void {
-        return;
-    }
+    undo(): void {}
 }
 
 export default SelectionChangeCommand;

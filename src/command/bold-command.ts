@@ -2,24 +2,27 @@ import Command from "./command";
 import {CSSProperties} from "react";
 
 class BoldCommand extends Command {
-    private backup?: string | number;
     private readonly styles: CSSProperties = {};
 
     constructor(editor: any) {
         super(editor);
         this.styles = this.editor.styles$.value;
-    }
+        this.name = 'BoldCommand';
 
-    saveBackup(): void {
-        this.backup = this.styles.fontWeight;
-    }
-
-    execute(): boolean {
-        this.saveBackup();
         const isBold = this.styles?.fontWeight === 'bold';
+
+        this.info = {
+            selection: '',
+            newState: {fontWeight: isBold ? 'normal' : 'bold'},
+            initialState: {fontWeight: this.styles.fontWeight},
+            timestamp: (new Date()).toDateString(),
+        }
+    }
+
+    do(): boolean {
         this.editor.styles$.next({
             ...this.styles,
-            fontWeight: isBold ? 'normal' : 'bold'
+            ...this.info?.newState
         })
         return true;
     }
@@ -27,7 +30,7 @@ class BoldCommand extends Command {
     undo(): void {
         this.editor.styles$.next({
             ...this.styles,
-            fontWeight: this.backup
+            ...this.info?.initialState
         })
     }
 }

@@ -1,11 +1,12 @@
 import Command from "./command";
 
 class CopyCommand extends Command {
-    saveBackup(): void {
-        return;
+    constructor(editor: any) {
+        super(editor);
+        this.name = 'CopyCommand';
     }
 
-    execute(): boolean {
+    do(): boolean {
         this.editor.clipboard = this.editor.selection;
         window.navigator.clipboard.writeText(this.editor.selection);
         return false;

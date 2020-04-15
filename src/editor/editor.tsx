@@ -3,7 +3,6 @@ import EditorStore from "./editor-store";
 import {combineLatest} from "rxjs/internal/observable/combineLatest";
 import {map} from "rxjs/operators";
 import {EditorState} from "./typing";
-import CommandInvoker from "../command/command-invoker";
 import BoldCommand from "../command/bold-command";
 import ItalicCommand from "../command/italic-command";
 import ContentEditable, {ContentEditableEvent} from 'react-contenteditable'
@@ -11,6 +10,7 @@ import TextEditCommand from "../command/text-edit-command";
 import SelectionChangeCommand from "../command/selection-change-command";
 import CopyCommand from "../command/copy-command";
 import PastCommand from "../command/past-command";
+import EditorActionManager from "./action-manager";
 
 class Editor extends Component<{}, EditorState> {
     private contentEditable: React.RefObject<HTMLElement>;
@@ -40,39 +40,39 @@ class Editor extends Component<{}, EditorState> {
             <div>
                 <div>
                     <button onClick={() => {
-                        CommandInvoker.invoke(new BoldCommand(EditorStore))
+                        EditorActionManager.add(new BoldCommand(EditorStore))
                     }}>Bold
                     </button>
                     <button onClick={() => {
-                        CommandInvoker.invoke(new ItalicCommand(EditorStore))
+                        EditorActionManager.add(new ItalicCommand(EditorStore))
                     }}>Italic
                     </button>
                     <button onClick={() => {
-                        CommandInvoker.invoke(new CopyCommand(EditorStore))
+                        EditorActionManager.add(new CopyCommand(EditorStore))
                     }}>Copy
                     </button>
                     <button onClick={() => {
-                        CommandInvoker.invoke(new PastCommand(EditorStore))
+                        EditorActionManager.add(new PastCommand(EditorStore))
                     }}>Past
                     </button>
                     <button onClick={() => {
-                        CommandInvoker.undo()
+                        EditorActionManager.undo()
                     }}>Undo
                     </button>
                     <button onClick={() => {
-                        CommandInvoker.redo()
+                        EditorActionManager.redo()
                     }}>Redo
                     </button>
                 </div>
                 <div
                     style={{border: "1px solid #ccc", padding: 15}}
-                    onMouseUp={() => CommandInvoker.invoke(new SelectionChangeCommand(EditorStore))}
+                    onMouseUp={() => EditorActionManager.add(new SelectionChangeCommand(EditorStore))}
                 >
                     <ContentEditable
                         innerRef={this.contentEditable}
                         html={data} // innerHTML of the editable div
                         disabled={false}       // use true to disable editing
-                        onChange={(event: ContentEditableEvent) => {CommandInvoker.invoke(new TextEditCommand(EditorStore, event.target.value))}} // handle innerHTML change
+                        onChange={(event: ContentEditableEvent) => {EditorActionManager.add(new TextEditCommand(EditorStore, event.target.value))}} // handle innerHTML change
                         tagName='div'
                         style={{outline: 'none', ...styles}}>
                     </ContentEditable>
